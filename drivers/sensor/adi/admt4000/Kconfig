@@ -11,3 +11,27 @@ config ADMT4000
 	help
 	  Enable SPI-based driver for Analog Devices ADMT4000 True Power-On
 	  Multiturn Sensor.
+
+config ADMT4000_IIO
+	bool "ADMT4000 IIO wrapper"
+	default y
+	depends on DT_HAS_ADI_ADMT4000_IIO_ENABLED
+	depends on ZEPHYR_LIBIIO_MODULE
+	depends on LIBIIO_IIO_DEVICE
+	select ADMT4000
+	help
+	  Expose the ADMT4000 sensor to the libiio IIOD server as an IIO
+	  device, publishing the turn count, angle, temperature, CORDIC
+	  sine/cosine and signal radius channels along with the device
+	  configuration attributes.
+
+config ADMT4000_IIO_INIT_PRIORITY
+	int "ADMT4000 IIO wrapper init priority"
+	default 91
+	depends on ADMT4000_IIO
+	help
+	  Initialization priority of the ADMT4000 IIO wrapper. This must be
+	  numerically higher than SENSOR_INIT_PRIORITY (default 90) so that
+	  the backing ADMT4000 sensor device is initialized first; the
+	  wrapper checks device_is_ready() on it at init. If you raise
+	  SENSOR_INIT_PRIORITY, raise this value to match.

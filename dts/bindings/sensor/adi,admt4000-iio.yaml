@@ -1,0 +1,51 @@
+# Copyright (c) 2026 Analog Devices, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+  IIO wrapper for the ADMT4000 True Power-On Multiturn Sensor.
+
+  Exposes an "adi,admt4000" sensor device to the libiio IIOD server as an IIO
+  device. The wrapper publishes the ADMT4000 turn count, angle, temperature,
+  CORDIC sine/cosine and signal radius channels, plus the device
+  configuration attributes, mirroring the no-OS ADMT4000 IIO driver.
+
+  This node must be placed inside the "iio-context" node so that the Zephyr
+  libiio backend picks it up when it builds the IIO context.
+
+  Example:
+
+    #include <zephyr/dt-bindings/gpio/arduino-header-r3.h>
+
+    &arduino_spi {
+            status = "okay";
+            cs-gpios = <&arduino_header ARDUINO_HEADER_R3_D10 GPIO_ACTIVE_LOW>;
+
+            admt4000: admt4000@0 {
+                    compatible = "adi,admt4000";
+                    reg = <0>;
+                    spi-max-frequency = <2000000>;
+                    adi,vdd-variant = <0>;
+            };
+    };
+
+    / {
+            iio-context {
+                    admt4000_iio {
+                            compatible = "adi,admt4000-iio";
+                            io-name = "admt4000";
+                            sensor-device = <&admt4000>;
+                    };
+            };
+    };
+
+compatible: "adi,admt4000-iio"
+
+include: iio,iio-device.yaml
+
+properties:
+  sensor-device:
+    type: phandle
+    required: true
+    description: |
+      Phandle to the "adi,admt4000" sensor node that this IIO device exposes.

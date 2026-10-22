@@ -1,0 +1,10 @@
+manifest:
+  remotes:
+    - name: analogdevicesinc
+      url-base: https://github.com/analogdevicesinc
+
+  projects:
+    - name: libiio
+      remote: analogdevicesinc
+      revision: main
+      path: modules/lib/libiio
